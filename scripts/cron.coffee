@@ -7,7 +7,7 @@ module.exports = (robot) ->
     user = {}
     robot.send user, "@all 八時だョ！全員帰ろう！"
   , null, true
-  new cron '0 16 22 * * 1-5', () ->
+  new cron '0 0 13 * * 1-5', () ->
     user = {}
     robot.send user, "@all お昼だよ！メッシメッシ！"
   , null, true
