@@ -3,11 +3,15 @@
 
 cron = require('cron').CronJob
 module.exports = (robot) ->
-  new cron '0 0 20 * * 1-5', () ->
-    user = {}
-    robot.send user, "@all 八時だョ！全員帰ろう！"
-  , null, true, "Asia/Tokyo"
-  new cron '0 12 13 * * 1-5', () ->
-    user = {}
-    robot.send user, "@all お昼だよ！メッシメッシ！"
-  , null, true, "Asia/Tokyo"
+  new cron
+    cronTime: '0 0 20 * * 1-5'
+    start: true
+    timeZone: "Asia/Tokyo"
+    onTick: ->
+      robot.send {}, "@all 八時だョ！全員帰ろう！"
+  new cron
+    cronTime: '0 28 13 * * 1-5'
+    start: true
+    timeZone: "Asia/Tokyo"
+    onTick: ->
+      robot.send {}, "@all お昼だよ！メッシメッシ！"
