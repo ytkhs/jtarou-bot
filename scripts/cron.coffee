@@ -10,8 +10,14 @@ module.exports = (robot) ->
     onTick: ->
       robot.send {}, "@all 八時だョ！全員帰ろう！"
   new cron
-    cronTime: '0 28 13 * * 1-5'
+    cronTime: '0 0 13 * * 1-5'
     start: true
     timeZone: "Asia/Tokyo"
     onTick: ->
       robot.send {}, "@all お昼だよ！メッシメッシ！"
+  new cron
+    cronTime: '*/10 * * * * 1-5'
+    start: true
+    timeZone: "Asia/Tokyo"
+    onTick: ->
+      robot.send {}, "10秒おきにしゃべるてすとだお"
