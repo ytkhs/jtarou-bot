@@ -14,7 +14,7 @@ module.exports = (robot) ->
     onTick: ->
       robot.send {room: "#general"}, "@everyone " + lunch_message[Math.floor(Math.random() * lunch_message.length)]
   new cron
-    cronTime: "0 * * * * *"
+    cronTime: "0 0 19 * * *"
     start: true
     timeZone: "Asia/Tokyo"
     onTick: ->
