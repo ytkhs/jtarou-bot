@@ -24,10 +24,6 @@ schedule = {
   24 : [0, 7, 18]
 }
 
-d = new Date();
-d.setTime(d.getTime() + 10*60*1000); # 10分後から
-nowHour = if d.getHours() is 0 then 24 else d.getHours();
-nowMinute =  d.getMinutes();
 
 result = []
 
@@ -35,13 +31,17 @@ module.exports = (robot) ->
 
   robot.hear /帰りたい|かえりたい/i, (msg) ->
     
-    break_flag = false; 
+    d = new Date();
+    d.setTime(d.getTime() + 10*60*1000); # 10分後から
+    nowHour = if d.getHours() is 0 then 24 else d.getHours();
+    nowMinute =  d.getMinutes();
+    
     for i, val of schedule
       if nowHour > i
         continue
       for j in val
         if nowHour is parseInt(i) and nowMinute > parseInt(j)
           continue
-        result.push sprintf '%1$02s:%2$02s', i, j
+        result.push sprintf ':train: %1$02s:%2$02s', i, j
       
-     msg.send ["かえろう！いますぐかえろう！", "今から乗れそうな電車はこちら:train:（平日しか対応してないよ:curly_loop:）", result.slice(0, 5).join("\n")].join("\n")
+     msg.send ["かえろう！いますぐかえろう！", "今から乗れそうな電車はこちら（平日しか対応してないよ:curly_loop:）", result.slice(0, 5).join("\n")].join("\n")
