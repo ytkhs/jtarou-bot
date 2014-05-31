@@ -7,7 +7,7 @@ module.exports = (robot) ->
   robot.hear /帰りたい|かえりたい/i, (msg) ->
     
     json = ""
-    request = msg.http('https://gist.githubusercontent.com/qube81/4a71734898e2decfd3f5/raw/a426a7b72ce27ef2cdb1de2cfdb00944c43d42e3/schedule.js').get()
+    request = msg.http('https://gist.githubusercontent.com/qube81/4a71734898e2decfd3f5/raw/schedule.js').get()
     request (err, res, body) ->
       json = JSON.parse body
      
@@ -23,6 +23,6 @@ module.exports = (robot) ->
         for j in val
           if nowHour is parseInt(i) and nowMinute > parseInt(j)
             continue
-          result.push sprintf ':train: %1$02s:%2$02s', i, j
+          result.push sprintf ':train:  %1$02s:%2$02s', i, j
       
        msg.send ["かえろう！いますぐかえろう！", "今から乗れそうな電車はこちら（平日しか対応してないよ:curly_loop:）", result.slice(0, 5).join("\n")].join("\n")
