@@ -34,8 +34,6 @@ result = []
 module.exports = (robot) ->
 
   robot.hear /帰りたい|かえりたい/i, (msg) ->
-    msg.send "かえろう！いますぐかえろう！"
-    msg.send "今から乗れそうな電車だお:train:（平日しか対応してないよ:curly_loop:）"
     
     break_flag = false; 
     for i, val of schedule
@@ -45,6 +43,5 @@ module.exports = (robot) ->
         if nowHour is parseInt(i) and nowMinute > parseInt(j)
           continue
         result.push sprintf '%1$02s:%2$02s', i, j
-        
-    for time in result.slice 0, 5
-      msg.send time
+      
+     msg.send ["かえろう！いますぐかえろう！", "今から乗れそうな電車はこちら:train:（平日しか対応してないよ:curly_loop:）", result.slice(0, 5).join("\n")].join("\n")
