@@ -4,7 +4,7 @@ sprintf = require('sprintf').sprintf
 
 module.exports = (robot) ->
 
-  robot.hear /帰りたい|かえりたい|k/i, (msg) ->
+  robot.hear /帰りたい|かえりたい/i, (msg) ->
     
     json = ""
     request = msg.http('https://gist.githubusercontent.com/qube81/4a71734898e2decfd3f5/raw/a426a7b72ce27ef2cdb1de2cfdb00944c43d42e3/schedule.js').get()
