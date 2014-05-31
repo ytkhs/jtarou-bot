@@ -25,8 +25,6 @@ schedule = {
 }
 
 
-result = []
-
 module.exports = (robot) ->
 
   robot.hear /帰りたい|かえりたい/i, (msg) ->
@@ -35,8 +33,8 @@ module.exports = (robot) ->
     d.setTime(d.getTime() + 10*60*1000); # 10分後から
     nowHour = if d.getHours() is 0 then 24 else d.getHours()
     nowMinute =  d.getMinutes()
-    d = null;
     
+    result = []
     for i, val of schedule
       if nowHour > i
         continue
