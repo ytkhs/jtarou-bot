@@ -3,6 +3,8 @@
 
 cron = require('cron').CronJob
 lunch_message = ["メッシ！", "はらへ", "ｼｭｯｼｭｯｼｭｯｼｭｯ"]
+LIST_KEY = 'keys'
+ANIME_KEY_PREFIX = 'anime_'
 
 
 module.exports = (robot) ->
@@ -27,6 +29,22 @@ module.exports = (robot) ->
             result += [anime.time, "『" + anime.title + "』", anime.next, anime.station].join(" ")
             result += "\n"
         robot.send {room: "#general"}, result
+  new cron
+    cronTime: "0 0 5 * * *"
+    start: true
+    timeZone: "Asia/Tokyo"
+    onTick: ->
+      redis = require('redis')
+      redis_cli = redis.createClient()
+      request = robot.http('http://animemap.net/api/table/tokyo.json').get()
+      request (err, res, body) ->
+        json = JSON.parse body
+        for anime, i in json.response.item
+          if anime.today is "1"
+            anime_key = ANIME_KEY_PREFIX+i
+            redis_cli.hmset(anime_key, anime)
+            redis_cli.sadd(LIST_KEY, anime_key)
+        redis_cli.end()
   new cron
     cronTime: "0 */5 * * * *"
     start: true
