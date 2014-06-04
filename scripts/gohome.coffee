@@ -12,7 +12,6 @@ module.exports = (robot) ->
       json = JSON.parse body
      
       d = new Date();
-      d.setTime(d.getTime() + 10*60*1000); # 10分後から
       nowHour = if d.getHours() is 0 then 24 else d.getHours()
       nowMinute =  d.getMinutes()
     
@@ -25,4 +24,4 @@ module.exports = (robot) ->
             continue
           result.push sprintf ':train:  %1$02s:%2$02s', i, j
       
-       msg.send ["かえろう！いますぐかえろう！", "今から乗れそうな電車はこちら（平日しか対応してないよ:curly_loop:）", result.slice(0, 5).join("\n")].join("\n")
+       msg.send ["新富町池袋方面行き！（平日しか対応してないです:whale:）", result.slice(0, 5).join("\n")].join("\n")
