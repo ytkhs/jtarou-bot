@@ -56,7 +56,6 @@ module.exports = (robot) ->
             anime_key = ANIME_KEY_PREFIX+i
             redisCli.hmset(anime_key, anime)
             redisCli.sadd(LIST_KEY, anime_key)
-        redisCli.end()
   new cron
     cronTime: "*/5 * * * * *"
     start: true
@@ -75,4 +74,3 @@ module.exports = (robot) ->
               redisCli.hmset(anime_key, anime)
           )
       )
-      redisCli.end()
