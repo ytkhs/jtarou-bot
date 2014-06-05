@@ -52,12 +52,12 @@ module.exports = (robot) ->
             start_time = start_time_array.join(':')
             start_datetime = dateFormat(dateObj, 'yyyy/mm/dd ') + start_time
             anime.timestamp = Date.parse(start_datetime) / 1000
-            anime.sended = false
-            anime_key = ANIME_KEY_PREFIX+i
-            redisCli.hmset(anime_key, anime)
-            redisCli.sadd(LIST_KEY, anime_key)
+            anime.key = ANIME_KEY_PREFIX+i
+            anime.sended = 0
+            redisCli.hmset(anime.key, anime)
+            redisCli.sadd(LIST_KEY, anime.key)
   new cron
-    cronTime: "*/5 * * * * *"
+    cronTime: "0 * * * * *"
     start: true
     timeZone: "Asia/Tokyo"
     onTick: ->
@@ -68,9 +68,9 @@ module.exports = (robot) ->
       redisCli.smembers(LIST_KEY, (err, result) ->
         for anime_key, i in result
           redisCli.hgetall(anime_key, (err, anime) ->
-            if !anime.sended && anime.timestamp in [now+(60*5)..now+(60*10)-1]
-              robot.send {room: "#general"}, anime.time + " から『" + anime.title + "』の" + anime.next + "が" + anime.station + "ではっじまっるよー"
-              anime.sended = true
-              redisCli.hmset(anime_key, anime)
+            if anime.sended is "0" && parseInt(anime.timestamp) in [now..now+(60*5)]
+              robot.send {room: "#general"}, "#{anime.time}から#{anime.station}で『#{anime.title}』#{anime.next}がはっじまっるよー"
+              anime.sended = 1
+              redisCli.hmset(anime.key, anime)
           )
       )
