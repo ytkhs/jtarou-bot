@@ -3,6 +3,8 @@
 
 cron = require('cron').CronJob
 lunch_message = ["メッシ！", "はらへ", "ｼｭｯｼｭｯｼｭｯｼｭｯ"]
+LIST_KEY = 'hubot:anime:keys'
+ANIME_KEY_PREFIX = 'hubot:anime:'
 
 
 module.exports = (robot) ->
@@ -27,3 +29,48 @@ module.exports = (robot) ->
             result += [anime.time, "『" + anime.title + "』", anime.next, anime.station].join(" ")
             result += "\n"
         robot.send {room: "#general"}, result
+  new cron
+    cronTime: "0 0 5 * * *"
+    start: true
+    timeZone: "Asia/Tokyo"
+    onTick: ->
+      redis = require('redis')
+      redisCli = redis.createClient()
+      request = robot.http('http://animemap.net/api/table/tokyo.json').get()
+      request (err, res, body) ->
+        dateFormat = require('dateformat')
+        json = JSON.parse body
+        for anime, i in json.response.item
+          if anime.today is "1"
+            dateObj = new Date()
+            start_time_array = anime.time.split(':')
+            start_hours = parseInt(start_time_array[0])
+            if start_hours >= 24
+              dateObj = new Date(dateObj.getTime() + (24*60*60*1000))
+              start_time_array[0] = ('0' + String(start_hours - 24)).slice(-2)
+            start_time_array.push('00')
+            start_time = start_time_array.join(':')
+            start_datetime = dateFormat(dateObj, 'yyyy/mm/dd ') + start_time
+            anime.timestamp = Date.parse(start_datetime) / 1000
+            anime.key = ANIME_KEY_PREFIX+i
+            anime.sended = 0
+            redisCli.hmset(anime.key, anime)
+            redisCli.sadd(LIST_KEY, anime.key)
+  new cron
+    cronTime: "0 * * * * *"
+    start: true
+    timeZone: "Asia/Tokyo"
+    onTick: ->
+      dateObj = new Date()
+      now = Math.floor(dateObj.getTime() / 1000)
+      redis = require('redis')
+      redisCli = redis.createClient()
+      redisCli.smembers(LIST_KEY, (err, result) ->
+        for anime_key, i in result
+          redisCli.hgetall(anime_key, (err, anime) ->
+            if anime.sended is "0" && parseInt(anime.timestamp) in [now..now+(60*5)]
+              robot.send {room: "#general"}, "#{anime.time}から#{anime.station}で『#{anime.title}』#{anime.next}がはっじまっるよー"
+              anime.sended = 1
+              redisCli.hmset(anime.key, anime)
+          )
+      )
