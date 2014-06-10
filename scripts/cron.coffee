@@ -34,11 +34,10 @@ module.exports = (robot) ->
     start: true
     timeZone: "Asia/Tokyo"
     onTick: ->
-      redis = require('redis')
-      redisCli = redis.createClient()
       request = robot.http('http://animemap.net/api/table/tokyo.json').get()
       request (err, res, body) ->
         dateFormat = require('dateformat')
+        anime_keys = []
         json = JSON.parse body
         for anime, i in json.response.item
           if anime.today is "1"
@@ -52,10 +51,15 @@ module.exports = (robot) ->
             start_time = start_time_array.join(':')
             start_datetime = dateFormat(dateObj, 'yyyy/mm/dd ') + start_time
             anime.timestamp = Date.parse(start_datetime) / 1000
-            anime.key = ANIME_KEY_PREFIX+i
+
+            anime_key = ANIME_KEY_PREFIX+i
+            if anime_keys.length is not 0
+              anime_keys = JSON.parse(robot.brain.get(LIST_KEY))
+            anime_keys.push(anime_key)
+            robot.brain.set LIST_KEY, JSON.stringify(anime_keys)
+
             anime.sended = 0
-            redisCli.hmset(anime.key, anime)
-            redisCli.sadd(LIST_KEY, anime.key)
+            robot.brain.set anime_key, JSON.stringify(anime)
   new cron
     cronTime: "0 * * * * *"
     start: true
@@ -63,14 +67,10 @@ module.exports = (robot) ->
     onTick: ->
       dateObj = new Date()
       now = Math.floor(dateObj.getTime() / 1000)
-      redis = require('redis')
-      redisCli = redis.createClient()
-      redisCli.smembers(LIST_KEY, (err, result) ->
-        for anime_key, i in result
-          redisCli.hgetall(anime_key, (err, anime) ->
-            if anime.sended is "0" && parseInt(anime.timestamp) in [now..now+(60*5)]
-              robot.send {room: "#general"}, "#{anime.time}から#{anime.station}で『#{anime.title}』#{anime.next}がはっじまっるよー"
-              anime.sended = 1
-              redisCli.hmset(anime.key, anime)
-          )
-      )
+      anime_keys = JSON.parse(robot.brain.get(LIST_KEY))
+      for anime_key, i in anime_keys
+        anime = JSON.parse(robot.brain.get(anime_key))
+        if anime.sended is 0 && anime.timestamp in [now..now+(60*5)]
+          robot.send {room: "#general"}, "#{anime.time}から#{anime.station}で『#{anime.title}』#{anime.next}がはっじまっるよー"
+          anime.sended = 1
+          robot.brain.set anime_key, JSON.stringify(anime)
