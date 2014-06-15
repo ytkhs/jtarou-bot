@@ -24,4 +24,4 @@ module.exports = (robot) ->
             continue
           result.push sprintf ':train:  %1$02s:%2$02s', i, j
       
-       msg.send ["新富町池袋方面行き！（平日しか対応してないです:whale:）", result.slice(0, 5).join("\n")].join("\n")
+       msg.send [":shipit:【平日】新富町池袋方面行き", result.slice(0, 5).join("\n")].join("\n")
