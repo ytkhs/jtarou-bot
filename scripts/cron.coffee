@@ -67,7 +67,9 @@ module.exports = (robot) ->
     onTick: ->
       dateObj = new Date()
       now = Math.floor(dateObj.getTime() / 1000)
-      anime_keys = JSON.parse(robot.brain.get(LIST_KEY))
+      if !anime_keys_json = robot.brain.get(LIST_KEY)
+        return
+      anime_keys = JSON.parse(anime_keys_json)
       for anime_key, i in anime_keys
         anime = JSON.parse(robot.brain.get(anime_key))
         if anime.sended is 0 && anime.timestamp in [now..now+(60*5)]
