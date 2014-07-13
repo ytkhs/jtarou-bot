@@ -2,19 +2,13 @@
 # set jobs
 
 cron = require('cron').CronJob
-lunch_message = ["メッシ！", "はらへ", "ｼｭｯｼｭｯｼｭｯｼｭｯ"]
+
 LIST_KEY = 'hubot:anime:keys'
 ANIME_KEY_PREFIX = 'hubot:anime:'
 
 
 module.exports = (robot) ->
   robot.enter ->
-  new cron
-    cronTime: "0 0 13 * * 1-5"
-    start: true
-    timeZone: "Asia/Tokyo"
-    onTick: ->
-      robot.send {room: "#general"}, ["@everyone", lunch_message[Math.floor(Math.random() * lunch_message.length)]].join(" ")
   new cron
     cronTime: "0 0 19 * * *"
     start: true
