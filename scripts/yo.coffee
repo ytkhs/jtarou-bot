@@ -20,6 +20,6 @@ module.exports = (robot) ->
         robot.http('http://api.justyo.co/yoall/')
           .header('Content-type', 'application/x-www-form-urlencoded')
           .post(data) (err, res, body) ->
-            robot.send {room: "#general"}, ["@everyone", "YO"].join(" ")
+            robot.send {room: "#general"}, "YO"
  
 
