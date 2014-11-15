@@ -2,19 +2,13 @@
 # set jobs
 
 cron = require('cron').CronJob
-lunch_message = ["メッシ！", "はらへ", "ｼｭｯｼｭｯｼｭｯｼｭｯ"]
+
 LIST_KEY = 'hubot:anime:keys'
 ANIME_KEY_PREFIX = 'hubot:anime:'
 
 
 module.exports = (robot) ->
   robot.enter ->
-  new cron
-    cronTime: "0 0 13 * * 1-5"
-    start: true
-    timeZone: "Asia/Tokyo"
-    onTick: ->
-      robot.send {room: "#general"}, ["@everyone", lunch_message[Math.floor(Math.random() * lunch_message.length)]].join(" ")
   new cron
     cronTime: "0 0 19 * * *"
     start: true
@@ -23,12 +17,12 @@ module.exports = (robot) ->
       request = robot.http('http://animemap.net/api/table/tokyo.json').get()
       request (err, res, body) ->
         json = JSON.parse body
-        result = "@moyashi @j_taro_origin 今日のアニメです！\n"
+        result = "@channel 今日のアニメです！\n"
         for anime, i in json.response.item
           if anime.today is "1"
             result += [anime.time, "『" + anime.title + "』", anime.next, anime.station].join(" ")
             result += "\n"
-        robot.send {room: "#general"}, result
+        robot.send {room: "#anime"}, result
   new cron
     cronTime: "0 0 5 * * *"
     start: true
@@ -73,6 +67,6 @@ module.exports = (robot) ->
       for anime_key, i in anime_keys
         anime = JSON.parse(robot.brain.get(anime_key))
         if anime.sended is 0 && anime.timestamp in [now..now+(60*5)]
-          robot.send {room: "#general"}, "#{anime.time}から#{anime.station}で『#{anime.title}』#{anime.next}がはっじまっるよー"
+          robot.send {room: "#anime"}, "@channel #{anime.time}から#{anime.station}で『#{anime.title}』#{anime.next}がはっじまっるよー"
           anime.sended = 1
           robot.brain.set anime_key, JSON.stringify(anime)
