@@ -36,6 +36,7 @@
     "npm": ">= 1.1.x"
   },
   "devDependencies": {
+    "coffee-script": "^1.6.3",
     "mocha": "~1.17.1"
   },
   "scripts": {
