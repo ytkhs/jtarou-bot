@@ -29,6 +29,7 @@
     "hubot-scripts": "^2.16.2",
     "hubot-slack": "3.*",
     "hubot-sushiyuki": "*",
+    "hubot-youtube": "^1.0.1",
     "sprintf": "^0.1.5",
     "time": "^0.11.4"
   },
