@@ -29,7 +29,7 @@
     "hubot-slack": "3.*",
     "hubot-sushiyuki": "*",
     "sprintf": "^0.1.3",
-    "time": "^0.10.0"
+    "time": "^0.11.4"
   },
   "engines": {
     "node": "0.10.x",
@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "coffee-script": "^1.6.3",
-    "mocha": "~1.17.1"
+    "mocha": "~2.4.5"
   },
   "scripts": {
     "test": "./node_modules/.bin/mocha"
